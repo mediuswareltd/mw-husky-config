@@ -1,0 +1,40 @@
+#!/bin/sh
+# ============================================================================
+# Git Pre-Commit Hook (Style Only)
+# ============================================================================
+# Purpose: Run style and formatting checks before commit
+#
+# Checks performed:
+#   1. Spelling check (cspell) - catches typos in code and comments
+#   2. Code formatting (prettier) - auto-fixes style issues
+#   3. Linting (eslint) - auto-fixes code quality issues
+#   4. Staged files only (lint-staged) - efficient incremental checks
+#
+# Exit Codes:
+#   0 - All checks passed
+#   1 - One or more checks failed
+#
+# Maintainer: Mediusware Engineering Team
+# ============================================================================
+
+echo "Running pre-commit checks..."
+echo ""
+
+# Run lint-staged for formatting, linting, and spelling on staged files
+echo "Checking code style and spelling..."
+npx lint-staged
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Style or spelling check failed!"
+  echo "   - Fix formatting issues with: npm run format"
+  echo "   - Fix linting issues with: npm run lint:fix"
+  echo "   - Check spelling with: npm run spell"
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "SUCCESS: All pre-commit checks passed!"
+echo ""
+
+exit 0

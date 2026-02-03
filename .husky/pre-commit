@@ -1,0 +1,68 @@
+#!/bin/sh
+# ============================================================================
+# Git Pre-Commit Hook 
+# ============================================================================
+# Purpose: Run quality checks before commit to ensure code quality, security,
+#          and proper formatting
+#
+# Checks performed:
+#   1. Spelling check (cspell) - catches typos in code and comments
+#   2. Code formatting (prettier) - auto-fixes style issues
+#   3. Linting (eslint) - auto-fixes code quality issues
+#   4. Security scanning - checks for secrets and dependency vulnerabilities
+#   5. Staged files only (lint-staged) - efficient incremental checks
+#
+# Exit Codes:
+#   0 - All checks passed
+#   1 - One or more checks failed
+#
+# Maintainer: Mediusware Engineering Team
+# ============================================================================
+
+echo "Running pre-commit checks..."
+echo ""
+
+# Run lint-staged for formatting, linting, and spelling on staged files
+echo "Checking code style and spelling..."
+npx lint-staged
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Style or spelling check failed!"
+  echo "   - Fix formatting issues with: npm run format"
+  echo "   - Fix linting issues with: npm run lint:fix"
+  echo "   - Check spelling with: npm run spell"
+  echo ""
+  exit 1
+fi
+
+# Run security checks for secrets
+echo ""
+echo "Scanning for secrets and sensitive data..."
+npm run security:secrets
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Security check failed - potential secrets detected!"
+  echo "   - Remove any API keys, passwords, or tokens from code"
+  echo "   - Use environment variables instead"
+  echo ""
+  exit 1
+fi
+
+# Run npm audit for dependency vulnerabilities
+echo ""
+echo "Checking dependencies for vulnerabilities..."
+npm run security
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "WARNING: Vulnerabilities found in dependencies!"
+  echo "   - Review with: npm audit"
+  echo "   - Fix with: npm audit fix"
+  echo ""
+  # Don't fail on audit warnings, just notify
+fi
+
+echo ""
+echo "SUCCESS: All pre-commit checks passed!"
+echo ""
+
+exit 0

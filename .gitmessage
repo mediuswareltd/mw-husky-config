@@ -1,0 +1,15 @@
+# <type>: <description>
+#
+# Types: feat, fix, chore, hotfix, refactor, docs, test, ci, perf
+#
+# Examples:
+#   feat: add user authentication system
+#   fix: resolve database connection timeout
+#   chore: update npm dependencies
+#   refactor: simplify payment processing logic
+#
+# Rules:
+#   - Message length: 10-100 characters
+#   - Format: <type>: <description>
+#   - Use lowercase for type and description
+#   - Be specific and concise

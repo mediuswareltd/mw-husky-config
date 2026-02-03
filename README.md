@@ -1,0 +1,330 @@
+# Husky Config
+
+A reusable Husky configuration package for maintaining consistent Git hooks across multiple projects with **automated setup**.
+
+## Features
+
+- **Automated Installation**: One command setup with dependency installation and configuration
+- **Pre-commit Hook**: Runs code quality checks including:
+  - Prettier formatting
+  - ESLint code linting
+  - Spelling checks (cspell)
+  - Secret scanning (secretlint)
+  - Security audit (npm audit)
+
+- **Commit Message Hook**: Enforces conventional commit standards
+  - Validates commit message format
+  - Ensures proper commit types (feat, fix, chore, etc.)
+  - Validates message length (10-100 characters)
+
+## Installation
+
+### 1. Install the package
+
+```bash
+npm install --save-dev husky-config
+```
+
+### 2. Choose Your Installation Mode
+
+#### Full Setup (Default)
+Complete setup with all features:
+
+```bash
+npx install-husky
+# or explicitly:
+npx install-husky --full-setup
+```
+
+**Includes:**
+- Pre-commit hooks (formatting, linting, spelling)
+- Security checks (secret scanning, npm audit)
+- Commit message validation
+- Commit message template
+
+**Dependencies:** `husky`, `lint-staged`, `prettier`, `eslint`, `cspell`, `secretlint`, `@secretlint/secretlint-rule-preset-recommend`
+
+---
+
+#### Style & Commit Message Only
+For projects that want code quality checks without security scanning:
+
+```bash
+npx install-husky --only-style-commit-msg
+```
+
+**Includes:**
+- Pre-commit hooks (formatting, linting, spelling)
+- Commit message validation
+- Commit message template
+- No security checks
+
+**Dependencies:** `husky`, `lint-staged`, `prettier`, `eslint`, `cspell`
+
+---
+
+#### Commit Message Only
+Minimal setup - only enforces commit message standards:
+
+```bash
+npx install-husky --only-commit-msg
+```
+
+**Includes:**
+- Commit message validation
+- Commit message template
+- No pre-commit style checks
+- No security checks
+
+**Dependencies:** `husky` only
+
+---
+
+### 3. Non-interactive mode
+
+For CI/CD or automated setups, use the `--yes` flag with any mode:
+
+```bash
+npx install-husky --only-commit-msg --yes
+```
+
+This will automatically accept all prompts and complete the setup.
+
+### 4. Mode Comparison
+
+| Feature | Full Setup | Style & Commit Msg | Commit Msg Only |
+|---------|------------|-------------------|-----------------|
+| Commit message validation | Yes | Yes | Yes |
+| Prettier formatting | Yes | Yes | No |
+| ESLint linting | Yes | Yes | No |
+| Spelling checks | Yes | Yes | No |
+| Secret scanning | Yes | No | No |
+| npm audit | Yes | No | No |
+| Dependencies | 7 packages | 5 packages | 1 package |
+
+## What Gets Automated
+
+The installer automatically handles (varies by mode):
+
+**Dependency Installation**
+- Installs only the dependencies needed for your chosen mode
+- Prompts before installing (skip with `--yes`)
+
+**Package.json Configuration**
+- Adds required scripts based on mode
+- Configures `lint-staged` with file patterns (if applicable)
+- Adds `prepare` script for Husky initialization
+
+**Git Hooks Setup**
+- Copies appropriate hooks for your mode
+- Makes hooks executable (Unix-based systems)
+- Sets up commit message template
+
+**Git Configuration**
+- Configures commit.template to use `.gitmessage`
+
+## Usage Examples
+
+### Example 1: Full Setup for Enterprise Project
+
+```bash
+cd my-enterprise-app
+npm install --save-dev husky-config
+npx install-husky --yes
+```
+
+Result: Complete setup with all security and quality checks.
+
+### Example 2: Open Source Project (No Security Scanning)
+
+```bash
+cd my-open-source-lib
+npm install --save-dev husky-config
+npx install-husky --only-style-commit-msg
+```
+
+Result: Code quality checks without secret scanning (good for public repos).
+
+### Example 3: Simple Documentation Repo
+
+```bash
+cd my-docs-repo
+npm install --save-dev husky-config
+npx install-husky --only-commit-msg --yes
+```
+
+Result: Only commit message validation, no code checks.
+
+---
+
+### 3. Manual Configuration (Optional)
+
+If you skip the automated setup, you can manually add to your `package.json`:
+
+```json
+{
+  "scripts": {
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "lint:fix": "eslint --fix",
+    "spell": "cspell \"**/*.{js,jsx,ts,tsx,md,json}\" --no-progress",
+    "security:secrets": "secretlint \"**/*\"",
+    "security": "npm audit --audit-level=moderate",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix",
+      "cspell --no-must-find-files"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write",
+      "cspell --no-must-find-files"
+    ]
+  }
+}
+```
+
+## Command Reference
+
+```bash
+# Default full setup (interactive)
+npx install-husky
+
+# Full setup (non-interactive)
+npx install-husky --full-setup --yes
+
+# Style checks + commit message (interactive)
+npx install-husky --only-style-commit-msg
+
+# Style checks + commit message (non-interactive)
+npx install-husky --only-style-commit-msg --yes
+
+# Commit message only (interactive)
+npx install-husky --only-commit-msg
+
+# Commit message only (non-interactive)
+npx install-husky --only-commit-msg --yes
+```
+
+## Configuration Files
+
+### Secretlint Configuration
+
+For `--full-setup` mode, a `.secretlintrc.json` file is automatically created with recommended security rules. This file configures secretlint to scan for:
+
+- API keys and tokens
+- Private keys and certificates
+- AWS credentials
+- Database connection strings
+- And other sensitive data
+
+You can customize this file to add or remove rules as needed. See [secretlint documentation](https://github.com/secretlint/secretlint) for available rules.
+
+### Other Configurations
+
+You may also want to configure:
+- `.prettierrc` - Prettier formatting rules
+- `.eslintrc` - ESLint linting rules
+- `cspell.json` - Custom spelling dictionary
+
+## Customization
+
+After installation, you can customize the hooks in your project's `.husky/` directory to match your specific requirements.
+
+### Pre-commit Hook Customization
+
+Edit `.husky/pre-commit` to:
+- Add or remove quality checks
+- Modify validation rules
+- Change error messages
+
+### Commit Message Hook Customization
+
+Edit `.husky/commit-msg` to:
+- Add or remove commit types
+- Change message length limits
+- Modify validation regex patterns
+
+## Commit Message Format
+
+This configuration enforces the following commit message format:
+
+```
+<type>: <description>
+```
+
+### Supported Types
+
+- `feat`: New feature
+- `fix`: Bug fix
+- `chore`: Routine task
+- `hotfix`: Urgent fix
+- `refactor`: Code refactoring
+- `docs`: Documentation changes
+- `test`: Testing changes
+- `ci`: CI/CD changes
+- `perf`: Performance improvements
+
+### Examples
+
+```bash
+git commit -m "feat: add user authentication system"
+git commit -m "fix: resolve database connection timeout"
+git commit -m "chore: update npm dependencies"
+git commit -m "refactor: simplify payment processing logic"
+```
+
+## Requirements
+
+- Node.js >= 14.0.0
+- npm >= 6.0.0
+- Git >= 2.9.0
+- Husky >= 9.0.0
+
+## Troubleshooting
+
+### Hooks not running
+
+1. Ensure Husky is properly initialized:
+   ```bash
+   npx husky install
+   ```
+
+2. Check that hooks are executable (Unix-based systems):
+   ```bash
+   chmod +x .husky/*
+   ```
+
+3. Verify the `prepare` script is in your `package.json`:
+   ```json
+   {
+     "scripts": {
+       "prepare": "husky"
+     }
+   }
+   ```
+
+### Permission errors on Windows
+
+Hooks should work on Windows via Git Bash or WSL. If you encounter issues:
+- Use Git Bash instead of PowerShell/CMD
+- Or install Windows Subsystem for Linux (WSL)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT
+
+## Author
+
+Mediusware Engineering Team
+
+## Links
+
+- [Husky Documentation](https://typicode.github.io/husky/)
+- [Conventional Commits](https://conventionalcommits.org/)
+- [lint-staged](https://github.com/okonet/lint-staged)

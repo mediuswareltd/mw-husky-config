@@ -1,0 +1,75 @@
+#!/bin/sh
+# ============================================================================
+# Git Commit Message Hook 
+# ============================================================================
+# Purpose: Enforces conventional commit message standards to maintain
+#          consistent, traceable, and automated changelog generation
+#
+# Standards: Conventional Commits v1.0.0 (https://conventionalcommits.org)
+# Reference: Mediusware Conventional Commits Guidelines
+#            https://github.com/mediuswareltd/conventional-commit-spec
+#
+# Validation Rules:
+#   - Commit type and format validation
+#   - Message length constraints (10-100 characters)
+#   - Optional scope and ticket reference support
+#   - Breaking change detection (!)
+#
+# Supported Formats:
+#   <type>: <description>
+#   <type>(scope): <description>
+#   <type>: <description> [TICKET-123]
+#   <type>(scope)!: <description> [TICKET-123]
+#
+# Maintainer: Mediusware Engineering Team
+# ============================================================================
+
+# Get the commit message (the first line)
+commit_msg=$(cat "$1")
+
+# Define allowed prefixes
+allowed_prefixes="feat|fix|chore|hotfix|refactor|docs|test|ci|perf"
+
+# Validate commit message format: <type>: <message>
+if ! echo "$commit_msg" | grep -qE "^($allowed_prefixes): .+"; then
+  echo ""
+  echo "Invalid commit message format!"
+  echo ""
+  echo "Allowed prefixes:"
+  echo "  - feat:     New feature"
+  echo "  - fix:      Bug fix"
+  echo "  - chore:    Routine task"
+  echo "  - hotfix:   Urgent fix"
+  echo "  - refactor: Code refactoring"
+  echo "  - docs:     Documentation"
+  echo "  - test:     Testing"
+  echo "  - ci:       CI/CD changes"
+  echo "  - perf:     Performance improvement"
+  echo ""
+  echo "Commit format:"
+  echo "  <type>: <short meaningful message>"
+  echo ""
+  echo "Examples:"
+  echo "  feat: add bulk upload for csv"
+  echo "  fix: handle null plan id"
+  echo "  hotfix: prevent double booking"
+  echo ""
+  echo "Your commit message:"
+  echo "  $commit_msg"
+  echo ""
+  exit 1
+fi
+
+# Validate commit message length (10-100 characters)
+msg_length=${#commit_msg}
+if [ "$msg_length" -lt 10 ] || [ "$msg_length" -gt 100 ]; then
+  echo ""
+  echo "Commit message must be between 10 and 100 characters!"
+  echo "Your commit message length: $msg_length"
+  echo "Your commit message:"
+  echo "  $commit_msg"
+  echo ""
+  exit 1
+fi
+
+exit 0

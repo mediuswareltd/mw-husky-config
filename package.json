@@ -1,0 +1,42 @@
+{
+  "name": "husky-config",
+  "version": "2.0.0",
+  "description": "Reusable Husky configuration for consistent Git hooks across projects with multiple installation modes",
+  "main": "install-husky.js",
+  "bin": {
+    "install-husky": "./install-husky.js"
+  },
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "husky",
+    "git-hooks",
+    "pre-commit",
+    "commit-msg",
+    "lint-staged",
+    "conventional-commits"
+  ],
+  "author": "Mediusware Engineering Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "husky": ">=9.0.0"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mediuswareltd/husky-config"
+  },
+  "files": [
+    ".husky/commit-msg",
+    ".husky/pre-commit",
+    ".husky/pre-commit-style",
+    ".gitmessage",
+    ".secretlintrc.json",
+    "install-husky.js",
+    "README.md"
+  ]
+}
