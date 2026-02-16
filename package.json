@@ -15,7 +15,10 @@
     "pre-commit",
     "commit-msg",
     "lint-staged",
-    "conventional-commits"
+    "conventional-commits",
+    "laravel",
+    "pint",
+    "phpstan"
   ],
   "author": "Mediusware Engineering Team",
   "license": "MIT",
@@ -34,8 +37,10 @@
     ".husky/commit-msg",
     ".husky/pre-commit",
     ".husky/pre-commit-style",
+    ".husky/pre-commit-laravel",
     ".gitmessage",
     ".secretlintrc.json",
+    ".cspell.json",
     "install-husky.js",
     "README.md"
   ]

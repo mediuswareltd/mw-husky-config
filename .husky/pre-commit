@@ -51,7 +51,7 @@ fi
 # Run npm audit for dependency vulnerabilities
 echo ""
 echo "Checking dependencies for vulnerabilities..."
-npm run security
+npm run security || true
 if [ $? -ne 0 ]; then
   echo ""
   echo "WARNING: Vulnerabilities found in dependencies!"

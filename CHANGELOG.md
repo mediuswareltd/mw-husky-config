@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `--full-setup`: Complete setup with all features (default)
   - `--only-style-commit-msg`: Style checks + commit validation (no security)
   - `--only-commit-msg`: Commit message validation only
+  - `--laravel`: Laravel projects – commit-msg + PHP pre-commit (pint, phpstan)
 - **Automated Setup:**
   - Auto-detects and installs missing dependencies
   - Auto-configures package.json scripts
@@ -55,8 +56,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mode comparison table in README
 - Detailed usage examples for different project types
 - New `pre-commit-style` hook (without security checks)
-- Default `.secretlintrc.json` configuration file
-- Automatic secretlint config setup for full-setup mode
+- Default `.secretlintrc.json` configuration file (full-setup mode)
+- Default `.cspell.json` configuration file (full-setup and style modes)
+- Automatic config file setup during installation
+- **Laravel mode** (`--laravel`): pre-commit runs `composer run lint`, `analyse` (Pint, PHPStan); optional composer.json script merge
 
 ### Changed
 - Enhanced installer with modular dependency installation
