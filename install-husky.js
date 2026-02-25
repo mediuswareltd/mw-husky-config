@@ -248,19 +248,25 @@ async function installHusky() {
       }
     }
     
-    // Step 3.6: Copy .secretlintrc.json if needed for full-setup mode
-    if (installMode === 'full-setup') {
+    // Step 3.6: Copy .secretlintrc.json (and .secretlintignore) for JavaScript-based modes
+    const isJsBasedMode = installMode === 'full-setup' || installMode === 'only-style-commit-msg';
+    if (isJsBasedMode) {
       const sourceSecretlintrc = path.join(packageRoot, '.secretlintrc.json');
       const targetSecretlintrc = path.join(targetRoot, '.secretlintrc.json');
       
       if (fs.existsSync(sourceSecretlintrc)) {
-        // Only copy if it doesn't exist (don't overwrite user's config)
         if (!fs.existsSync(targetSecretlintrc)) {
           await fs.copy(sourceSecretlintrc, targetSecretlintrc, { overwrite: false });
           logSuccess('Copied .secretlintrc.json config');
         } else {
           log('Using existing .secretlintrc.json config', 'blue');
         }
+      }
+      const sourceSecretlintignore = path.join(packageRoot, '.secretlintignore');
+      const targetSecretlintignore = path.join(targetRoot, '.secretlintignore');
+      if (fs.existsSync(sourceSecretlintignore) && !fs.existsSync(targetSecretlintignore)) {
+        await fs.copy(sourceSecretlintignore, targetSecretlintignore, { overwrite: false });
+        logSuccess('Copied .secretlintignore');
       }
     }
     
@@ -278,6 +284,37 @@ async function installHusky() {
           log('Using existing .cspell.json config', 'blue');
         }
       }
+    }
+    console.log('');
+
+    // Step 3.8: Ensure .gitignore includes .env to prevent accidental key leaks
+    const targetGitignore = path.join(targetRoot, '.gitignore');
+    const envPatterns = ['.env', '.env.local', '.env.*.local'];
+    if (fs.existsSync(targetGitignore)) {
+      const content = fs.readFileSync(targetGitignore, 'utf8');
+      const hasEnvIgnore = envPatterns.some(p => content.includes(p));
+      if (!hasEnvIgnore) {
+        const envBlock = [
+          '',
+          '# Environment (prevent accidental key leaks)',
+          '.env',
+          '.env.local',
+          '.env.*.local',
+          ''
+        ].join('\n');
+        fs.appendFileSync(targetGitignore, envBlock);
+        logSuccess('Added .env to .gitignore');
+      }
+    } else {
+      const envBlock = [
+        '# Environment (prevent accidental key leaks)',
+        '.env',
+        '.env.local',
+        '.env.*.local',
+        ''
+      ].join('\n');
+      fs.writeFileSync(targetGitignore, envBlock);
+      logSuccess('Created .gitignore with .env entries');
     }
     console.log('');
 
