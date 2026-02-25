@@ -1,0 +1,52 @@
+#!/bin/sh
+# ============================================================================
+# Git Pre-Commit Hook (Laravel)
+# ============================================================================
+# Purpose: Run PHP quality checks before commit (pint, phpstan)
+#
+# Checks performed:
+#   1. Laravel Pint - code style (lint/fix)
+#   2. PHPStan - static analysis
+#
+# Requires composer.json scripts:
+#   "lint": "vendor/bin/pint",
+#   "analyse": "vendor/bin/phpstan"
+#
+# Exit Codes:
+#   0 - All checks passed
+#   1 - One or more checks failed
+#
+# ============================================================================
+
+echo "Running Laravel pre-commit checks..."
+echo ""
+
+# Laravel Pint (lint)
+echo ""
+echo "Running Laravel Pint..."
+composer run lint
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: Pint lint failed!"
+  echo "   - Fix with: composer run lint"
+  echo ""
+  exit 1
+fi
+
+# PHPStan (analyse)
+echo ""
+echo "Running PHPStan..."
+composer run analyse
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "ERROR: PHPStan analysis failed!"
+  echo "   - Fix with: composer run analyse"
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "SUCCESS: All Laravel pre-commit checks passed!"
+echo ""
+
+exit 0

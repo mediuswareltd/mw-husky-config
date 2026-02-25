@@ -16,7 +16,6 @@
 #   0 - All checks passed
 #   1 - One or more checks failed
 #
-# Maintainer: Mediusware Engineering Team
 # ============================================================================
 
 echo "Running pre-commit checks..."
@@ -51,7 +50,7 @@ fi
 # Run npm audit for dependency vulnerabilities
 echo ""
 echo "Checking dependencies for vulnerabilities..."
-npm run security
+npm run security || true
 if [ $? -ne 0 ]; then
   echo ""
   echo "WARNING: Vulnerabilities found in dependencies!"

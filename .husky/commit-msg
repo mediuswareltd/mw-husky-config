@@ -6,8 +6,6 @@
 #          consistent, traceable, and automated changelog generation
 #
 # Standards: Conventional Commits v1.0.0 (https://conventionalcommits.org)
-# Reference: Mediusware Conventional Commits Guidelines
-#            https://github.com/mediuswareltd/conventional-commit-spec
 #
 # Validation Rules:
 #   - Commit type and format validation
@@ -21,7 +19,6 @@
 #   <type>: <description> [TICKET-123]
 #   <type>(scope)!: <description> [TICKET-123]
 #
-# Maintainer: Mediusware Engineering Team
 # ============================================================================
 
 # Get the commit message (the first line)

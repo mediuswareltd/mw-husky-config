@@ -104,6 +104,13 @@ function updatePackageJson(packageJsonPath, updates) {
   fs.writeJsonSync(packageJsonPath, packageJson, { spaces: 2 });
 }
 
+function updateComposerJson(composerJsonPath, scriptUpdates) {
+  const composerJson = fs.readJsonSync(composerJsonPath);
+  composerJson.scripts = composerJson.scripts || {};
+  Object.assign(composerJson.scripts, scriptUpdates);
+  fs.writeJsonSync(composerJsonPath, composerJson, { spaces: 2 });
+}
+
 async function installHusky() {
   try {
     // Parse command line arguments
@@ -112,7 +119,9 @@ async function installHusky() {
     
     // Determine installation mode
     let installMode = 'full-setup'; // default
-    if (args.includes('--only-commit-msg')) {
+    if (args.includes('--laravel')) {
+      installMode = 'laravel';
+    } else if (args.includes('--only-commit-msg')) {
       installMode = 'only-commit-msg';
     } else if (args.includes('--only-style-commit-msg')) {
       installMode = 'only-style-commit-msg';
@@ -126,7 +135,8 @@ async function installHusky() {
     const modeDescriptions = {
       'full-setup': 'Full Setup (pre-commit + commit-msg + security)',
       'only-style-commit-msg': 'Style & Commit Message (prettier, eslint, spelling + commit-msg)',
-      'only-commit-msg': 'Commit Message Only (conventional commits validation)'
+      'only-commit-msg': 'Commit Message Only (conventional commits validation)',
+      'laravel': 'Laravel (commit-msg + PHP pre-commit: pint, phpstan)'
     };
     
     log(`Mode: ${modeDescriptions[installMode]}`, 'blue');
@@ -184,6 +194,10 @@ async function installHusky() {
       ],
       'only-commit-msg': [
         { source: 'commit-msg', target: 'commit-msg' }
+      ],
+      'laravel': [
+        { source: 'commit-msg', target: 'commit-msg' },
+        { source: 'pre-commit-laravel', target: 'pre-commit' }
       ]
     };
     
@@ -234,13 +248,13 @@ async function installHusky() {
       }
     }
     
-    // Step 3.6: Copy .secretlintrc.json if needed for full-setup mode
-    if (installMode === 'full-setup') {
+    // Step 3.6: Copy .secretlintrc.json (and .secretlintignore) for JavaScript-based modes
+    const isJsBasedMode = installMode === 'full-setup' || installMode === 'only-style-commit-msg';
+    if (isJsBasedMode) {
       const sourceSecretlintrc = path.join(packageRoot, '.secretlintrc.json');
       const targetSecretlintrc = path.join(targetRoot, '.secretlintrc.json');
       
       if (fs.existsSync(sourceSecretlintrc)) {
-        // Only copy if it doesn't exist (don't overwrite user's config)
         if (!fs.existsSync(targetSecretlintrc)) {
           await fs.copy(sourceSecretlintrc, targetSecretlintrc, { overwrite: false });
           logSuccess('Copied .secretlintrc.json config');
@@ -248,24 +262,80 @@ async function installHusky() {
           log('Using existing .secretlintrc.json config', 'blue');
         }
       }
+      const sourceSecretlintignore = path.join(packageRoot, '.secretlintignore');
+      const targetSecretlintignore = path.join(targetRoot, '.secretlintignore');
+      if (fs.existsSync(sourceSecretlintignore) && !fs.existsSync(targetSecretlintignore)) {
+        await fs.copy(sourceSecretlintignore, targetSecretlintignore, { overwrite: false });
+        logSuccess('Copied .secretlintignore');
+      }
+    }
+    
+    // Step 3.7: Copy .cspell.json if needed for modes that use cspell
+    if (installMode === 'full-setup' || installMode === 'only-style-commit-msg') {
+      const sourceCspell = path.join(packageRoot, '.cspell.json');
+      const targetCspell = path.join(targetRoot, '.cspell.json');
+      
+      if (fs.existsSync(sourceCspell)) {
+        // Only copy if it doesn't exist (don't overwrite user's config)
+        if (!fs.existsSync(targetCspell)) {
+          await fs.copy(sourceCspell, targetCspell, { overwrite: false });
+          logSuccess('Copied .cspell.json config');
+        } else {
+          log('Using existing .cspell.json config', 'blue');
+        }
+      }
+    }
+    console.log('');
+
+    // Step 3.8: Ensure .gitignore includes .env to prevent accidental key leaks
+    const targetGitignore = path.join(targetRoot, '.gitignore');
+    const envPatterns = ['.env', '.env.local', '.env.*.local'];
+    if (fs.existsSync(targetGitignore)) {
+      const content = fs.readFileSync(targetGitignore, 'utf8');
+      const hasEnvIgnore = envPatterns.some(p => content.includes(p));
+      if (!hasEnvIgnore) {
+        const envBlock = [
+          '',
+          '# Environment (prevent accidental key leaks)',
+          '.env',
+          '.env.local',
+          '.env.*.local',
+          ''
+        ].join('\n');
+        fs.appendFileSync(targetGitignore, envBlock);
+        logSuccess('Added .env to .gitignore');
+      }
+    } else {
+      const envBlock = [
+        '# Environment (prevent accidental key leaks)',
+        '.env',
+        '.env.local',
+        '.env.*.local',
+        ''
+      ].join('\n');
+      fs.writeFileSync(targetGitignore, envBlock);
+      logSuccess('Created .gitignore with .env entries');
     }
     console.log('');
 
     // Step 4: Check for package.json and automate configuration
     log('Step 3: Configuring project...', 'bright');
     const packageJsonPath = path.join(targetRoot, 'package.json');
+    const hasPackageJson = fs.existsSync(packageJsonPath);
     
-    if (!fs.existsSync(packageJsonPath)) {
+    if (!hasPackageJson && installMode !== 'laravel') {
       logWarning('package.json not found in current directory');
       logWarning('Skipping automated configuration');
       console.log('');
       return;
     }
     
-    logSuccess('package.json found');
+    if (hasPackageJson) {
+      logSuccess('package.json found');
+    }
     console.log('');
     
-    const packageJson = await fs.readJson(packageJsonPath);
+    const packageJson = hasPackageJson ? await fs.readJson(packageJsonPath) : {};
     
     // Check existing dependencies
     const allDeps = {
@@ -286,6 +356,10 @@ async function installHusky() {
       'only-commit-msg': {
         core: ['husky'],
         tools: []
+      },
+      'laravel': {
+        core: ['husky'],
+        tools: []
       }
     };
     
@@ -293,8 +367,8 @@ async function installHusky() {
     const missingCore = requiredDeps.core.filter(dep => !allDeps[dep]);
     const missingTools = requiredDeps.tools.filter(dep => !allDeps[dep]);
     
-    // Step 5: Install dependencies
-    if (missingCore.length > 0 || missingTools.length > 0) {
+    // Step 5: Install dependencies (npm, only when package.json exists)
+    if (hasPackageJson && (missingCore.length > 0 || missingTools.length > 0)) {
       log('Step 4: Installing dependencies...', 'bright');
       console.log('');
       
@@ -329,12 +403,13 @@ async function installHusky() {
         }
         console.log('');
       }
-    } else {
+    } else if (hasPackageJson) {
       logSuccess('All dependencies already installed');
       console.log('');
     }
     
-    // Step 6: Configure package.json
+    // Step 6: Configure package.json (only when package.json exists)
+    if (hasPackageJson) {
     log('Step 5: Configuring package.json...', 'bright');
     
     // Define scripts and lint-staged config based on mode
@@ -354,6 +429,9 @@ async function installHusky() {
         'prepare': 'husky'
       },
       'only-commit-msg': {
+        'prepare': 'husky'
+      },
+      'laravel': {
         'prepare': 'husky'
       }
     };
@@ -381,7 +459,8 @@ async function installHusky() {
           'cspell --no-must-find-files'
         ]
       },
-      'only-commit-msg': null // No lint-staged needed
+      'only-commit-msg': null,
+      'laravel': null
     };
     
     const requiredScripts = scriptsByMode[installMode];
@@ -431,6 +510,47 @@ async function installHusky() {
     } else {
       logSuccess('package.json already configured');
     }
+    }
+    
+    // Step 6b: For Laravel mode, update composer.json with PHP scripts
+    if (installMode === 'laravel') {
+      const composerJsonPath = path.join(targetRoot, 'composer.json');
+      if (fs.existsSync(composerJsonPath)) {
+        const composerScripts = {
+          'lint': 'vendor/bin/pint',
+          'analyse': 'vendor/bin/phpstan'
+        };
+        const composerJson = fs.readJsonSync(composerJsonPath);
+        const existingComposerScripts = composerJson.scripts || {};
+        const missingComposerScripts = Object.keys(composerScripts).filter(
+          name => !existingComposerScripts[name] || existingComposerScripts[name] !== composerScripts[name]
+        );
+        if (missingComposerScripts.length > 0) {
+          console.log('');
+          log('Missing composer scripts for pre-commit hook:', 'yellow');
+          missingComposerScripts.forEach(name => {
+            log(`  - ${name}: ${composerScripts[name]}`, 'yellow');
+          });
+          console.log('');
+          const shouldUpdateComposer = isNonInteractive || await promptYesNo('Add these scripts to composer.json?');
+          if (shouldUpdateComposer) {
+            try {
+              updateComposerJson(composerJsonPath, composerScripts);
+              logSuccess('composer.json updated with lint, analyse scripts');
+            } catch (error) {
+              logError('Failed to update composer.json');
+              console.error(error);
+            }
+          }
+        } else {
+          logSuccess('composer.json already has required scripts');
+        }
+      } else {
+        logWarning('composer.json not found - pre-commit hook expects: lint, analyse scripts');
+        log('Add to composer.json "scripts":', 'yellow');
+        log('  "lint": "vendor/bin/pint", "analyse": "vendor/bin/phpstan"', 'blue');
+      }
+    }
     console.log('');
 
     // Success summary
@@ -458,6 +578,11 @@ async function installHusky() {
       log('  • Commit message validation (conventional commits)', 'blue');
       log('  • Git commit template for guidance', 'blue');
       log('  • Note: No pre-commit style/security checks in this mode', 'yellow');
+    } else if (installMode === 'laravel') {
+      log('  • Commit message validation (conventional commits)', 'blue');
+      log('  • Pre-commit: Laravel Pint, PHPStan (via composer)', 'blue');
+      log('  • Git commit template for guidance', 'blue');
+      log('  • Note: Install laravel/pint and phpstan/phpstan via Composer if not present', 'yellow');
     }
     console.log('');
     

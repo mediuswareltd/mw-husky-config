@@ -80,6 +80,27 @@ npx install-husky --only-commit-msg
 
 ---
 
+#### Laravel
+For Laravel projects: commit message validation + PHP pre-commit (Pint, PHPStan). No JS spelling/lint/secret checks.
+
+```bash
+npx install-husky --laravel
+```
+
+**Includes:**
+- Commit message validation (conventional commits)
+- Pre-commit: Laravel Pint, PHPStan (via Composer)
+- Commit message template
+- No cspell, ESLint, Prettier, or secretlint
+
+**Dependencies:** `husky` only (npm). PHP tools via Composer: `laravel/pint`, `phpstan/phpstan`.
+
+**Composer scripts** (added automatically if missing):
+- `lint` – `vendor/bin/pint`
+- `analyse` – `vendor/bin/phpstan`
+
+---
+
 ### 3. Non-interactive mode
 
 For CI/CD or automated setups, use the `--yes` flag with any mode:
@@ -92,15 +113,14 @@ This will automatically accept all prompts and complete the setup.
 
 ### 4. Mode Comparison
 
-| Feature | Full Setup | Style & Commit Msg | Commit Msg Only |
-|---------|------------|-------------------|-----------------|
-| Commit message validation | Yes | Yes | Yes |
-| Prettier formatting | Yes | Yes | No |
-| ESLint linting | Yes | Yes | No |
-| Spelling checks | Yes | Yes | No |
-| Secret scanning | Yes | No | No |
-| npm audit | Yes | No | No |
-| Dependencies | 7 packages | 5 packages | 1 package |
+| Feature | Full Setup | Style & Commit Msg | Commit Msg Only | Laravel |
+|---------|------------|-------------------|-----------------|---------|
+| Commit message validation | Yes | Yes | Yes | Yes |
+| Pre-commit (JS: prettier, eslint, cspell) | Yes | Yes | No | No |
+| Pre-commit (PHP: pint, phpstan) | No | No | No | Yes |
+| Secret scanning | Yes | No | No | No |
+| npm audit | Yes | No | No | No |
+| Dependencies (npm) | 7 packages | 5 packages | 1 package | 1 package |
 
 ## What Gets Automated
 
@@ -155,6 +175,16 @@ npx install-husky --only-commit-msg --yes
 
 Result: Only commit message validation, no code checks.
 
+### Example 4: Laravel Project
+
+```bash
+cd my-laravel-app
+npm install --save-dev husky-config
+
+``npx install-husky --laravel`
+
+Result: Commit message validation + pre-commit running Pint and PHPStan. Install PHP tools if needed: `composer require --dev laravel/pint phpstan/phpstan`.
+
 ---
 
 ### 3. Manual Configuration (Optional)
@@ -205,28 +235,55 @@ npx install-husky --only-commit-msg
 
 # Commit message only (non-interactive)
 npx install-husky --only-commit-msg --yes
+
+# Laravel (commit-msg + PHP pre-commit)
+npx install-husky --laravel
+
+# Laravel (non-interactive)
+npx install-husky --laravel --yes
 ```
 
 ## Configuration Files
 
-### Secretlint Configuration
+### Automatically Created Configurations
 
-For `--full-setup` mode, a `.secretlintrc.json` file is automatically created with recommended security rules. This file configures secretlint to scan for:
+The installer creates default configuration files based on your selected mode:
 
+#### CSpell Configuration (`.cspell.json`)
+
+Created for: `--full-setup` and `--only-style-commit-msg` modes
+
+Default configuration includes:
+- Common dev tool names (husky, eslint, prettier, etc.)
+- Ignored paths (node_modules, dist, build)
+- Ignored patterns (hex codes, UUIDs, all-caps abbreviations)
+- Compound word support
+
+You can customize this file to:
+- Add project-specific words to the `words` array
+- Ignore additional paths or patterns
+- Configure language settings
+
+See [cspell documentation](https://cspell.org/configuration/) for all options.
+
+#### Secretlint Configuration (`.secretlintrc.json`)
+
+Created for: `--full-setup` mode only
+
+Default configuration scans for:
 - API keys and tokens
 - Private keys and certificates
 - AWS credentials
 - Database connection strings
-- And other sensitive data
+- Other sensitive data
 
-You can customize this file to add or remove rules as needed. See [secretlint documentation](https://github.com/secretlint/secretlint) for available rules.
+You can customize this file to add or remove rules. See [secretlint documentation](https://github.com/secretlint/secretlint) for available rules.
 
-### Other Configurations
+### Additional Configurations (Optional)
 
 You may also want to configure:
 - `.prettierrc` - Prettier formatting rules
 - `.eslintrc` - ESLint linting rules
-- `cspell.json` - Custom spelling dictionary
 
 ## Customization
 
