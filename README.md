@@ -122,6 +122,10 @@ This will automatically accept all prompts and complete the setup.
 | npm audit | Yes | No | No | No |
 | Dependencies (npm) | 7 packages | 5 packages | 1 package | 1 package |
 
+### SOC 2 and compliance
+
+Full-setup mode supports SOC 2–relevant controls: **secret scanning** (confidentiality), **traceable commits** (change management), **code quality checks**, and **dependency audit**. Use **full-setup** for strongest coverage. See **[docs/SOC2-COMPLIANCE.md](docs/SOC2-COMPLIANCE.md)** for a control mapping and optional hardening (e.g. failing on npm audit, signed commits).
+
 ## What Gets Automated
 
 The installer automatically handles (varies by mode):
