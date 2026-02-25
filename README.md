@@ -180,8 +180,8 @@ Result: Only commit message validation, no code checks.
 ```bash
 cd my-laravel-app
 npm install --save-dev husky-config
-npx install-husky --laravel
-```
+
+``npx install-husky --laravel`
 
 Result: Commit message validation + pre-commit running Pint and PHPStan. Install PHP tools if needed: `composer require --dev laravel/pint phpstan/phpstan`.
 

@@ -16,7 +16,6 @@
 #   0 - All checks passed
 #   1 - One or more checks failed
 #
-# Maintainer: Mediusware Engineering Team
 # ============================================================================
 
 echo "Running Laravel pre-commit checks..."
