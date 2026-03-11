@@ -117,10 +117,12 @@ async function installHusky() {
     const args = process.argv.slice(2);
     const isNonInteractive = args.includes('--yes') || args.includes('-y');
     
-    // Determine installation mode
+    // Determine installation mode (simple: --javascript / --php, or legacy flags)
     let installMode = 'full-setup'; // default
-    if (args.includes('--laravel')) {
+    if (args.includes('--php') || args.includes('--laravel')) {
       installMode = 'laravel';
+    } else if (args.includes('--javascript') || args.includes('--js')) {
+      installMode = 'full-setup';
     } else if (args.includes('--only-commit-msg')) {
       installMode = 'only-commit-msg';
     } else if (args.includes('--only-style-commit-msg')) {
