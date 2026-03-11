@@ -1,4 +1,9 @@
-# Husky Config
+<div align="center">
+  <img src="arts/logo.png" alt="alt text" height="250" width="250">
+</div>
+
+
+# MW Husky Config
 
 A reusable Husky configuration package for maintaining consistent Git hooks across multiple projects with **automated setup**.
 
