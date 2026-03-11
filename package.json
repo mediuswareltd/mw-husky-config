@@ -1,6 +1,6 @@
 {
-  "name": "husky-config",
-  "version": "2.0.0",
+  "name": "mw-husky-config",
+  "version": "0.0.1",
   "description": "Reusable Husky configuration for consistent Git hooks across projects with multiple installation modes",
   "main": "install-husky.js",
   "bin": {
