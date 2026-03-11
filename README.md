@@ -27,13 +27,30 @@ npm install --save-dev husky-config
 
 ### 2. Choose Your Installation Mode
 
+**Simple options (recommended):**
+
+```bash
+# JavaScript / Node project (pre-commit + commit-msg + security)
+npx install-husky --javascript
+# or: npx install-husky --js
+
+# PHP / Laravel project (commit-msg + Pint, PHPStan)
+npx install-husky --php
+# or: npx install-husky --laravel
+```
+
+**Other modes:** `--full-setup`, `--only-style-commit-msg`, `--only-commit-msg` (see below).
+
+---
+
 #### Full Setup (Default)
-Complete setup with all features:
+Complete setup with all features (same as `--javascript`):
 
 ```bash
 npx install-husky
 # or explicitly:
 npx install-husky --full-setup
+npx install-husky --javascript
 ```
 
 **Includes:**
@@ -80,11 +97,12 @@ npx install-husky --only-commit-msg
 
 ---
 
-#### Laravel
+#### Laravel / PHP
 For Laravel projects: commit message validation + PHP pre-commit (Pint, PHPStan). No JS spelling/lint/secret checks.
 
 ```bash
-npx install-husky --laravel
+npx install-husky --php
+# or: npx install-husky --laravel
 ```
 
 **Includes:**
@@ -106,7 +124,7 @@ npx install-husky --laravel
 For CI/CD or automated setups, use the `--yes` flag with any mode:
 
 ```bash
-npx install-husky --only-commit-msg --yes
+npx install-husky --javascript --yes   # or --php --yes, --only-commit-msg --yes, etc.
 ```
 
 This will automatically accept all prompts and complete the setup.
@@ -149,12 +167,12 @@ The installer automatically handles (varies by mode):
 
 ## Usage Examples
 
-### Example 1: Full Setup for Enterprise Project
+### Example 1: JavaScript / Full Setup (Enterprise)
 
 ```bash
 cd my-enterprise-app
 npm install --save-dev husky-config
-npx install-husky --yes
+npx install-husky --javascript --yes
 ```
 
 Result: Complete setup with all security and quality checks.
@@ -179,19 +197,19 @@ npx install-husky --only-commit-msg --yes
 
 Result: Only commit message validation, no code checks.
 
-### Example 4: Laravel Project
+### Example 4: Laravel / PHP Project
 
 ```bash
 cd my-laravel-app
 npm install --save-dev husky-config
-
-``npx install-husky --laravel`
+npx install-husky --php --yes
+```
 
 Result: Commit message validation + pre-commit running Pint and PHPStan. Install PHP tools if needed: `composer require --dev laravel/pint phpstan/phpstan`.
 
 ---
 
-### 3. Manual Configuration (Optional)
+### Manual Configuration (Optional)
 
 If you skip the automated setup, you can manually add to your `package.json`:
 
@@ -222,6 +240,12 @@ If you skip the automated setup, you can manually add to your `package.json`:
 ## Command Reference
 
 ```bash
+# Simple options (recommended)
+npx install-husky --javascript          # JS/Node: full pre-commit + commit-msg + security
+npx install-husky --js --yes           # same, non-interactive
+npx install-husky --php                # PHP/Laravel: commit-msg + Pint, PHPStan
+npx install-husky --laravel --yes      # same, non-interactive
+
 # Default full setup (interactive)
 npx install-husky
 
@@ -240,10 +264,8 @@ npx install-husky --only-commit-msg
 # Commit message only (non-interactive)
 npx install-husky --only-commit-msg --yes
 
-# Laravel (commit-msg + PHP pre-commit)
-npx install-husky --laravel
-
-# Laravel (non-interactive)
+# Laravel / PHP (commit-msg + PHP pre-commit)
+npx install-husky --php
 npx install-husky --laravel --yes
 ```
 
