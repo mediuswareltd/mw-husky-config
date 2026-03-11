@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="arts/logo.png" alt="alt text" height="250" width="250">
+  <img src="https://github.com/mediuswareltd/mw-husky-config/blob/HEAD/arts/logo.png?raw=true" alt="alt text" height="250" width="250">
 </div>
 
 
