@@ -4,7 +4,7 @@
   "description": "Reusable Husky configuration for consistent Git hooks across projects with multiple installation modes",
   "main": "install-husky.js",
   "bin": {
-    "install-husky": "./install-husky.js"
+    "install-husky": "install-husky.js"
   },
   "scripts": {
     "test": "echo \"No tests specified\" && exit 0"
@@ -31,7 +31,7 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/mediuswareltd/husky-config"
+    "url": "git+https://github.com/mediuswareltd/husky-config.git"
   },
   "files": [
     ".husky/commit-msg",
