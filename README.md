@@ -7,6 +7,10 @@
 
 A reusable Husky configuration package for maintaining consistent Git hooks across multiple projects with **automated setup**.
 
+```bash
+npm i --save-dev mw-husky-config
+```
+
 ## Features
 
 - **Automated Installation**: One command setup with dependency installation and configuration
