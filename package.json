@@ -1,6 +1,6 @@
 {
-  "name": "mw-husky-config",
-  "version": "0.0.1",
+  "name": "@mediusware/mw-husky-config",
+  "version": "0.0.2",
   "description": "Reusable Husky configuration for consistent Git hooks across projects with multiple installation modes",
   "main": "install-husky.js",
   "bin": {

@@ -8,7 +8,7 @@
 A reusable Husky configuration package for maintaining consistent Git hooks across multiple projects with **automated setup**.
 
 ```bash
-npm i --save-dev mw-husky-config
+npm i --save-dev @mediusware/mw-husky-config
 ```
 
 ## Features
@@ -31,7 +31,7 @@ npm i --save-dev mw-husky-config
 ### 1. Install the package
 
 ```bash
-npm install --save-dev husky-config
+npm install --save-dev @mediusware/mw-husky-config
 ```
 
 ### 2. Choose Your Installation Mode
@@ -180,7 +180,7 @@ The installer automatically handles (varies by mode):
 
 ```bash
 cd my-enterprise-app
-npm install --save-dev husky-config
+npm install --save-dev @mediusware/mw-husky-config
 npx install-husky --javascript --yes
 ```
 
@@ -190,7 +190,7 @@ Result: Complete setup with all security and quality checks.
 
 ```bash
 cd my-open-source-lib
-npm install --save-dev husky-config
+npm install --save-dev @mediusware/mw-husky-config
 npx install-husky --only-style-commit-msg
 ```
 
@@ -200,7 +200,7 @@ Result: Code quality checks without secret scanning (good for public repos).
 
 ```bash
 cd my-docs-repo
-npm install --save-dev husky-config
+npm install --save-dev @mediusware/mw-husky-config
 npx install-husky --only-commit-msg --yes
 ```
 
@@ -210,7 +210,7 @@ Result: Only commit message validation, no code checks.
 
 ```bash
 cd my-laravel-app
-npm install --save-dev husky-config
+npm install --save-dev @mediusware/mw-husky-config
 npx install-husky --php --yes
 ```
 
