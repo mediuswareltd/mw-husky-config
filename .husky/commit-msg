@@ -24,6 +24,11 @@
 # Get the commit message (the first line)
 commit_msg=$(cat "$1")
 
+# Allow Git-generated merge commit subjects
+if echo "$commit_msg" | grep -qE "^Merge( branch| remote-tracking branch| pull request) "; then
+  exit 0
+fi
+
 # Define allowed prefixes
 allowed_prefixes="feat|fix|chore|hotfix|refactor|docs|test|ci|perf"
 
