@@ -31,7 +31,7 @@ npm i --save-dev @mediusware/mw-husky-config
 ### 1. Install the package
 
 ```bash
-npm install --save-dev husky-config
+npm i --save-dev @mediusware/mw-husky-config
 ```
 
 ### 2. Choose Your Installation Mode
