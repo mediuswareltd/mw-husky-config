@@ -10,7 +10,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png' }],
   ],
   themeConfig: {
-    logo: { light: '/logo.png', dark: '/logo.png' },
+    logo: { light: '/logo.png', dark: '/logo.png', alt: "MW Husky Config" },
     siteTitle: "MW Husky Config",
     nav: [
       { text: 'Home', link: '/' },
@@ -45,7 +45,8 @@ export default defineConfig({
     },
     search: {
       provider: 'local'
-    }
+    },
+    outline: [2, 3]
   }
 ,
   vite: {
