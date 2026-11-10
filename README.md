@@ -420,3 +420,15 @@ Mediusware Engineering Team
 - [Husky Documentation](https://typicode.github.io/husky/)
 - [Conventional Commits](https://conventionalcommits.org/)
 - [lint-staged](https://github.com/okonet/lint-staged)
+
+## Documentation
+
+Full docs site (VitePress): **https://mediuswareltd.github.io/mw-husky-config/**
+
+Local preview:
+
+```bash
+cd docs
+npm install
+npm run docs:dev
+```
