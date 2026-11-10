@@ -155,7 +155,7 @@ This will automatically accept all prompts and complete the setup.
 
 ### SOC 2 and compliance
 
-Full-setup mode supports SOC 2–relevant controls: **secret scanning** (confidentiality), **traceable commits** (change management), **code quality checks**, and **dependency audit**. Use **full-setup** for strongest coverage. See **[docs/SOC2-COMPLIANCE.md](docs/SOC2-COMPLIANCE.md)** for a control mapping and optional hardening (e.g. failing on npm audit, signed commits).
+Full-setup mode supports SOC 2–relevant controls: **secret scanning** (confidentiality), **traceable commits** (change management), **code quality checks**, and **dependency audit**. Use **full-setup** for strongest coverage. See **[docs/SOC2-COMPLIANCE.md](https://github.com/mediuswareltd/mw-husky-config/blob/main/docs/SOC2-COMPLIANCE.md)** for a control mapping and optional hardening (e.g. failing on npm audit, signed commits).
 
 ## What Gets Automated
 

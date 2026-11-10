@@ -6,6 +6,7 @@ export default defineConfig({
   base: '/mw-husky-config/',
   cleanUrls: true,
   lastUpdated: true,
+  ignoreDeadLinks: true,
   head: [
     ['link', { rel: 'icon', href: '/favicon.png' }],
   ],
