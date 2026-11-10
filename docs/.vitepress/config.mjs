@@ -7,10 +7,10 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   head: [
-    ['link', { rel: 'icon', href: '/favicon.svg' }],
+    ['link', { rel: 'icon', href: '/favicon.png' }],
   ],
   themeConfig: {
-    logo: { light: '/logo.svg', dark: '/logo.svg' },
+    logo: { light: '/logo.png', dark: '/logo.png' },
     siteTitle: "MW Husky Config",
     nav: [
       { text: 'Home', link: '/' },
@@ -45,6 +45,14 @@ export default defineConfig({
     },
     search: {
       provider: 'local'
+    }
+  }
+,
+  vite: {
+    css: {
+      postcss: {
+        plugins: []
+      }
     }
   }
 })

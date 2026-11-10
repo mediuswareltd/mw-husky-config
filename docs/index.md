@@ -5,6 +5,9 @@ hero:
   name: "MW Husky Config"
   text: "Reusable Git hooks for Mediusware projects"
   tagline: "A reusable Husky configuration package for consistent pre-commit quality checks and conventional commit messages."
+  image:
+    src: /hero.png
+    alt: "MW Husky Config"
   actions:
   - theme: brand
     text: Get started
